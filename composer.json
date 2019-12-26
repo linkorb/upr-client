@@ -1,0 +1,39 @@
+{
+    "name": "linkorb/upr-client",
+    "description": "Upr Client Library",
+    "homepage": "https://github.com/linkorb/upr-client",
+    "keywords": [
+        "linkorb"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joost Faassen",
+            "email": "j.faassen@linkorb.com",
+            "role": "Development"
+        },
+        {
+            "name": "LinkORB",
+            "email": "engineering@linkorb.com",
+            "role": "Development"
+        },
+        {
+            "name": "Kaushik Prajapati",
+            "email": "prajapatikaushik@gmail.com",
+            "role": "developer"
+        }
+    ],
+    "require": {
+        "symfony/cache": "^5.0",
+        "guzzlehttp/guzzle": "^6.5",
+        "symfony/dotenv": "^5.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Upr\\Client\\": "src/"
+        }
+    }
+}
