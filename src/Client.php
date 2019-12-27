@@ -4,7 +4,7 @@ namespace Upr\Client;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-//use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class Client
@@ -24,13 +24,13 @@ class Client
 
     public static function createFromEnv(): self
     {
-        if ($uprCache = getenv('UPR_CACHE')) {
-            if (!file_exists($uprCache)) {
-                throw new \RuntimeException('Directory not exists: '.$uprCache);
-            }
+        $uprCache = getenv('UPR_CACHE');
+        if (!empty($uprCache) && file_exists($uprCache)) {
+            $cache = new FilesystemAdapter('', 0, $uprCache);
+        } else {
+            $cache = new PhpArrayAdapter('upr_cache.php',new FilesystemAdapter());
         }
 
-        $cache = new FilesystemAdapter($uprCache);
         $uprUrlArray = parse_url(getenv('UPR_URL'));
 
         $url = $uprUrlArray['scheme'].'://'.$uprUrlArray['host'];
