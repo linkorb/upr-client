@@ -13,7 +13,7 @@ $hashCode = $argv[1];
 
 if (count($argv)!=2) {
     echo "Please pass 1 parameter: hashCode\n";
-    exit();
+    exit(-1);
 }
 
 $upr = Upr\Client\Client::createFromEnv();
