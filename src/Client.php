@@ -5,7 +5,8 @@ namespace Upr\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Contracts\Cache\CacheInterface;
+use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Cache\Psr16Cache;
 use RuntimeException;
 
 class Client
@@ -37,9 +38,9 @@ class Client
                 if (!file_exists($path)) {
                     throw new RuntimeException("Cache path does not exist: " . $path);
                 }
-                return new FilesystemAdapter('', self::TTL, $path);
+                return new Psr16Cache(new FilesystemAdapter('', self::TTL, $path));
             case 'array':
-                return new ArrayAdapter(self::TTL, true);
+                return new Psr16Cache(ArrayAdapter(self::TTL, true));
         }
         throw new RuntimeException("Cache DSN specifies unsupported scheme: " . $part['scheme']);
     }
