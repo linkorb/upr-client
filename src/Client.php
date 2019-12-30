@@ -42,7 +42,7 @@ class Client
                 }
                 return new Psr16Cache(new FilesystemAdapter('', self::TTL, $path));
             case 'array':
-                return new Psr16Cache(ArrayAdapter(self::TTL, true));
+                return new Psr16Cache(new ArrayAdapter(self::TTL, true));
         }
         throw new RuntimeException("Cache DSN specifies unsupported scheme: " . $part['scheme']);
     }
