@@ -26,10 +26,10 @@
     ],
     "require": {
         "symfony/cache": "^5.0",
-        "guzzlehttp/guzzle": "^6.5",
-        "symfony/dotenv": "^5.0"
+        "guzzlehttp/guzzle": "^6.5"
     },
     "require-dev": {
+        "linkorb/envoi": "^1.0"
     },
     "autoload": {
         "psr-4": {

@@ -2,8 +2,10 @@
 
 namespace Upr\Client;
 
-use GuzzleHttp\Client  as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class Client
 {
@@ -12,7 +14,7 @@ class Client
     private $password;
     private $GuzzleClient;
 
-    public function __construct(string $url, string $username, string $password, FilesystemAdapter $cache)
+    public function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -22,7 +24,13 @@ class Client
 
     public static function createFromEnv(): self
     {
-        $cache = new FilesystemAdapter(getenv('UPR_CACHE_PATH'));
+        $uprCache = getenv('UPR_CACHE');
+        if (!empty($uprCache) && file_exists($uprCache)) {
+            $cache = new FilesystemAdapter('', 0, $uprCache);
+        } else {
+            $cache = new PhpArrayAdapter('upr_cache.php',new FilesystemAdapter());
+        }
+
         $uprUrlArray = parse_url(getenv('UPR_URL'));
 
         $url = $uprUrlArray['scheme'].'://'.$uprUrlArray['host'];
@@ -35,16 +43,12 @@ class Client
 
     public function getFileMetadata(string $hashCode): array
     {
-        try {
-            $res = $this->guzzleClient->request('GET', $this->url.'/api/v1/files/'.$hashCode.'/metadata', [
+        $res = $this->guzzleClient->request('GET', $this->url.'/api/v1/files/'.$hashCode.'/metadata', [
                 'auth' => [$this->username, $this->password],
                 'headers' => [
                     ['Accept' => 'application/json'],
                 ],
             ]);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
 
         return json_decode($res->getBody(), true);
     }
