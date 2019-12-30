@@ -14,16 +14,13 @@ class Client
     private $url;
     private $username;
     private $password;
-    private $guzzleClient;
+    private $guzzle;
     private $cache;
     const TTL = 0;
 
-    private function __construct(string $url, string $username, string $password, CacheInterface $cache)
+    private function __construct(GuzzleClient $guzzle, CacheInterface $cache)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->url = $url;
-        $this->guzzleClient = new GuzzleClient();
+        $this->guzzle = $guzzle;
         $this->cache = $cache;
     }
 
@@ -62,7 +59,18 @@ class Client
         $url .= $uprUrlArray['path'] ?? '';
         $url .= (!empty($uprUrlArray['query'])) ? '&'.$uprUrlArray['query'] : '';
 
-        return new self($url, $uprUrlArray['user'], $uprUrlArray['pass'], $cache);
+        $guzzle = new GuzzleClient([
+            'base_uri' => $url,
+            'auth' => [
+                $uprUrlArray['user'],
+                $uprUrlArray['pass'],
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+            ]
+        ]);
+
+        return new self($guzzle, $cache);
     }
 
     public function getFileMetadata(string $hashCode): array
@@ -71,13 +79,8 @@ class Client
             // cache hit
             return $this->cache->get($hashCode);
         }
-        // cache miss
-        $res = $this->guzzleClient->request('GET', $this->url.'/api/v1/files/'.$hashCode.'/metadata', [
-                'auth' => [$this->username, $this->password],
-                'headers' => [
-                    ['Accept' => 'application/json'],
-                ],
-            ]);
+        // cache miss, retrieve from origin (remote server)
+        $res = $this->guzzle->get('/api/v1/files/'.$hashCode.'/metadata');
 
         $data = json_decode($res->getBody(), true);
         $this->cache->set($hashCode, $data);
