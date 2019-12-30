@@ -26,7 +26,8 @@
     ],
     "require": {
         "symfony/cache": "^5.0",
-        "guzzlehttp/guzzle": "^6.5"
+        "guzzlehttp/guzzle": "^6.5",
+        "psr/simple-cache": "^1.0"
     },
     "require-dev": {
         "linkorb/envoi": "^1.0"
