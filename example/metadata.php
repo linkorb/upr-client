@@ -9,12 +9,13 @@ $envFilename = __DIR__.'/../.env';
 $envMetaFile = __DIR__.'/../.env.yaml';
 Envoi::init($envFilename, $envMetaFile);
 
-$hashCode = $argv[1];
 
 if (count($argv)!=2) {
     echo "Please pass 1 parameter: hashCode\n";
     exit(-1);
 }
+
+$hashCode = $argv[1];
 
 $upr = Upr\Client\Client::createFromEnv();
 $data = $upr->getFileMetadata($hashCode);
