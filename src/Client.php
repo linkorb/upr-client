@@ -67,6 +67,11 @@ class Client
 
     public function getFileMetadata(string $hashCode): array
     {
+        if ($this->cache->has($hashCode)) {
+            // cache hit
+            return $this->cache->get($hashCode);
+        }
+        // cache miss
         $res = $this->guzzleClient->request('GET', $this->url.'/api/v1/files/'.$hashCode.'/metadata', [
                 'auth' => [$this->username, $this->password],
                 'headers' => [
@@ -74,6 +79,8 @@ class Client
                 ],
             ]);
 
-        return json_decode($res->getBody(), true);
+        $data = json_decode($res->getBody(), true);
+        $this->cache->set($hashCode, $data);
+        return $data;
     }
 }
