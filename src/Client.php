@@ -14,6 +14,7 @@ class Client
     private $username;
     private $password;
     private $GuzzleClient;
+    const TTL = 0;
 
     private function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
     {
@@ -31,9 +32,9 @@ class Client
             if (!file_exists($path)) {
                 throw new RuntimeException("Cache path does not exist: " . $path);
             }
-            $cache = new FilesystemAdapter('', 0, $path);
+            $cache = new FilesystemAdapter('', self::TTL, $path);
         } else {
-            $cache = new ArrayAdapter(0, true);
+            $cache = new ArrayAdapter(self::TTL, true);
         }
 
         $uprUrlArray = parse_url(getenv('UPR_URL'));
