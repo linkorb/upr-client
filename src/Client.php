@@ -15,14 +15,16 @@ class Client
     private $username;
     private $password;
     private $guzzleClient;
+    private $cache;
     const TTL = 0;
 
-    private function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
+    private function __construct(string $url, string $username, string $password, CacheInterface $cache)
     {
         $this->username = $username;
         $this->password = $password;
         $this->url = $url;
         $this->guzzleClient = new GuzzleClient();
+        $this->cache = $cache;
     }
 
     public static function createCache(string $dsn): CacheInterface
