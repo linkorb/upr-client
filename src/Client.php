@@ -4,7 +4,7 @@ namespace Upr\Client;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use RuntimeException;
 
@@ -33,7 +33,7 @@ class Client
             }
             $cache = new FilesystemAdapter('', 0, $path);
         } else {
-            $cache = new PhpArrayAdapter('upr_cache.php',new FilesystemAdapter());
+            $cache = new ArrayAdapter(0, true);
         }
 
         $uprUrlArray = parse_url(getenv('UPR_URL'));
