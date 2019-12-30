@@ -6,6 +6,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
+use RuntimeException;
 
 class Client
 {
@@ -25,8 +26,12 @@ class Client
     public static function createFromEnv(): self
     {
         $uprCache = getenv('UPR_CACHE');
-        if (!empty($uprCache) && file_exists($uprCache)) {
-            $cache = new FilesystemAdapter('', 0, $uprCache);
+        if (!empty($uprCache)) {
+            $path = $uprCache;
+            if (!file_exists($path)) {
+                throw new RuntimeException("Cache path does not exist: " . $path);
+            }
+            $cache = new FilesystemAdapter('', 0, $path);
         } else {
             $cache = new PhpArrayAdapter('upr_cache.php',new FilesystemAdapter());
         }
