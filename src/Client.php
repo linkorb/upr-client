@@ -53,6 +53,12 @@ class Client
         $cache = self::createCache($uprCacheDsn);
         
         $url = getenv('UPR_URL');
+        if (!$url) {
+            throw new RuntimeException("UPR_URL not defined");
+        }
+        if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
+            throw new RuntimeException("Upr URL is invalid: " . $url);
+        }
 
         $guzzle = new GuzzleClient([
             'base_uri' => $url,
