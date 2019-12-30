@@ -52,19 +52,10 @@ class Client
         }
         $cache = self::createCache($uprCacheDsn);
         
-        $uprUrlArray = parse_url(getenv('UPR_URL'));
-
-        $url = $uprUrlArray['scheme'].'://'.$uprUrlArray['host'];
-        $url .= (!empty($uprUrlArray['port'])) ? ':'.$uprUrlArray['port'] : '';
-        $url .= $uprUrlArray['path'] ?? '';
-        $url .= (!empty($uprUrlArray['query'])) ? '&'.$uprUrlArray['query'] : '';
+        $url = getenv('UPR_URL');
 
         $guzzle = new GuzzleClient([
             'base_uri' => $url,
-            'auth' => [
-                $uprUrlArray['user'],
-                $uprUrlArray['pass'],
-            ],
             'headers' => [
                 'Accept' => 'application/json',
             ]
