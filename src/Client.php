@@ -14,7 +14,7 @@ class Client
     private $password;
     private $GuzzleClient;
 
-    public function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
+    private function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
     {
         $this->username = $username;
         $this->password = $password;
