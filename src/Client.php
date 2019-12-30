@@ -13,7 +13,7 @@ class Client
     private $url;
     private $username;
     private $password;
-    private $GuzzleClient;
+    private $guzzleClient;
     const TTL = 0;
 
     private function __construct(string $url, string $username, string $password, ?CacheInterface $cache = null)
