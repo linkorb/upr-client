@@ -11,9 +11,6 @@ use RuntimeException;
 
 class Client
 {
-    private $url;
-    private $username;
-    private $password;
     private $guzzle;
     private $cache;
     const TTL = 0;
