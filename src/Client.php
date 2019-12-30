@@ -24,19 +24,34 @@ class Client
         $this->guzzleClient = new GuzzleClient();
     }
 
+    public static function createCache(string $dsn): CacheInterface
+    {
+        // Sanity check if $dsn is a valid URL
+        if (filter_var($dsn, FILTER_VALIDATE_URL) === FALSE) {
+            throw new RuntimeException("Cache DSN is not a valid URL: " . $dsn);
+        }
+        $part = parse_url($dsn);
+        switch ($part['scheme']) {
+            case 'file':
+                $path = $dsn;
+                if (!file_exists($path)) {
+                    throw new RuntimeException("Cache path does not exist: " . $path);
+                }
+                return new FilesystemAdapter('', self::TTL, $path);
+            case 'array':
+                return new ArrayAdapter(self::TTL, true);
+        }
+        throw new RuntimeException("Cache DSN specifies unsupported scheme: " . $part['scheme']);
+    }
+
     public static function createFromEnv(): self
     {
-        $uprCache = getenv('UPR_CACHE');
-        if (!empty($uprCache)) {
-            $path = $uprCache;
-            if (!file_exists($path)) {
-                throw new RuntimeException("Cache path does not exist: " . $path);
-            }
-            $cache = new FilesystemAdapter('', self::TTL, $path);
-        } else {
-            $cache = new ArrayAdapter(self::TTL, true);
+        $uprCacheDsn = getenv('UPR_CACHE');
+        if (!$uprCacheDsn) {
+            $uprCacheDsn = 'array://null'; // default fallback
         }
-
+        $cache = self::createCache($uprCacheDsn);
+        
         $uprUrlArray = parse_url(getenv('UPR_URL'));
 
         $url = $uprUrlArray['scheme'].'://'.$uprUrlArray['host'];
