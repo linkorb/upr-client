@@ -43,13 +43,13 @@ class Client
 
     public static function createFromEnv(): self
     {
-        $uprCacheDsn = getenv('UPR_CACHE');
+        $uprCacheDsn = $_ENV['UPR_CACHE'];
         if (!$uprCacheDsn) {
             $uprCacheDsn = 'array://null'; // default fallback
         }
         $cache = self::createCache($uprCacheDsn);
-        
-        $url = getenv('UPR_URL');
+
+        $url = $_ENV['UPR_URL'];
         if (!$url) {
             throw new RuntimeException("UPR_URL not defined");
         }
